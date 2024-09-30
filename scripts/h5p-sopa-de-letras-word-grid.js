@@ -349,8 +349,13 @@
     if (locations.length === 0) {
       return false;
     }
-
-    const selectedLoc = locations[Math.floor(Math.random() * locations.length)];
+  
+    // Sort locations by overlap, preferring less overlap
+    locations.sort((a, b) => a.overlap - b.overlap);
+  
+    // Choose a random location from the top 3 (or fewer if less than 3 exist)
+    const selectedLoc = locations[Math.floor(Math.random() * Math.min(3, locations.length))];
+  
     for (let index = 0; index < word.length; index++) {
       const next = orientations[selectedLoc.orientation](selectedLoc.x, selectedLoc.y, index);
       wordGrid[next.y][next.x] = word[index];
@@ -372,13 +377,15 @@
         wordGrid[i][j] = '';
       }
     }
-
-    for (const i in words) {
-      if (!placeWordInGrid(wordGrid, options, words[i])) {
-        return null;
+  
+    const placedWords = [];
+    for (const word of words) {
+      if (placeWordInGrid(wordGrid, options, word)) {
+        placedWords.push(word);
       }
     }
-    return wordGrid;
+  
+    return placedWords.length === words.length ? wordGrid : null;
   };
 
   /**
@@ -491,6 +498,10 @@
   SopaDeLetras.WordGrid.prototype.createWordGrid = function () {
     let wordGrid = null ;
     let attempts = 0;
+
+    // Set minimum grid size
+    this.options.height = Math.max(this.options.height, 10);
+    this.options.width = Math.max(this.options.width, 10);
 
     // sorting the words by length speedup the word fitting algorithm
     const wordList = this.options.vocabulary.slice(0).sort(function (a, b) {
@@ -608,33 +619,34 @@
     this.$container = $container;
     this.elementSize = elementSize;
     
-    // Create the grid container
     const $grid = $('<div>', {
       class: 'puzzle-container',
       role: 'grid',
       tabindex: '0'
     }).appendTo(this.$container);
   
-    // Create grid cells
     this.wordGrid.forEach((row, rowIndex) => {
+      const $row = $('<div>', {
+        class: 'grid-row',
+      }).appendTo($grid);
+  
       row.forEach((letter, colIndex) => {
         $('<div>', {
           class: 'grid-cell',
           text: letter.toUpperCase(),
           'data-row': rowIndex,
           'data-col': colIndex
-        }).appendTo($grid);
+        }).appendTo($row);
       });
     });
   
-    // Set grid dimensions
-    const gridWidth = this.wordGrid[0].length * elementSize;
-    const gridHeight = this.wordGrid.length * elementSize;
     $grid.css({
-      width: gridWidth + 'px',
-      height: gridHeight + 'px',
       display: 'grid',
-      gridTemplateColumns: `repeat(${this.wordGrid[0].length}, 1fr)`
+      gridTemplateColumns: `repeat(${this.wordGrid[0].length}, ${this.elementSize}px)`,
+      gridTemplateRows: `repeat(${this.wordGrid.length}, ${this.elementSize}px)`,
+      gap: '1px',
+      background: '#ccc',
+      padding: '1px',
     });
   
     this.registerGridEvents();
@@ -694,6 +706,10 @@
       'diagonalUpBack': 'diagonalUpBack'
     };
     return directionMap[direction];
+  };
+
+  SopaDeLetras.WordGrid.prototype.getPlacedWords = function () {
+    return this.placedWords;
   };
 
   return SopaDeLetras.WordGrid;
