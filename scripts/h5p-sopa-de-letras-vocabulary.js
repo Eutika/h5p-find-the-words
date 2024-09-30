@@ -6,12 +6,12 @@
    * @param {Object} params
    * @param {boolean} showVocabulary
    */
-  SopaDeLetras.Vocabulary = function (params, showVocabulary, header, wordIcons) {
+  SopaDeLetras.Vocabulary = function (params, wordIcons, showVocabulary, header) {
     /** @alias H5P.SopaDeLetras.Vocabulary# */
-    this.words = params;
-    this.header = header;
-    this.showVocabulary = showVocabulary;
-    this.wordIcons = wordIcons;
+    this.words = Array.isArray(params) ? params : [];
+    this.header = header || 'Find the words';
+    this.showVocabulary = !!showVocabulary;
+    this.wordIcons = wordIcons || {};
     this.wordsFound = [];
     this.wordsNotFound = [];
     this.wordsSolved = [];

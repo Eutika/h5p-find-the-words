@@ -13,28 +13,29 @@ H5P.SopaDeLetras = (function ($, UI) {
    * @param {Object} extras
    */
   function SopaDeLetras(options, id, extras) {
-
     /** @alias H5P.SopaDeLetras# */
     this.id = id;
     this.extras = extras;
     this.numFound = 0;
     this.isAttempted = false;
     this.isGameStarted = false;
-
-     // Add a check for options and options.wordList
-    if (!options || !options.wordList) {
-      console.error('Invalid options or missing wordList');
-      options = options || {};
-      options.wordList = [];
-    }
+  
+    // Ensure options is an object
+    options = options || {};
+  
+    // Ensure wordList exists and is an array
+    options.wordList = Array.isArray(options.wordList) ? options.wordList : [];
+  
     // Only take the unique words
-    const vocabulary = this.options.wordList.map(item => item.word);
-    const wordIcons = this.options.wordList.reduce((acc, item) => {
-      acc[item.word] = item.icon;
+    const vocabulary = options.wordList.map(item => (item && item.word) || '').filter(Boolean);
+    const wordIcons = options.wordList.reduce((acc, item) => {
+      if (item && item.word && item.icon) {
+        acc[item.word] = item.icon;
+      }
       return acc;
     }, {});
-
-    this.options = $.extend(true, {
+  
+    this.options = H5P.jQuery.extend(true, {
       vocabulary: vocabulary,
       height: 5,
       width: 5,
