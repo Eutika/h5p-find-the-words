@@ -1,12 +1,12 @@
-(function (FindTheWords) {
+(function (SopaDeLetras) {
   /**
    * Keeps track of the number of times the game is submitted.
-   * @class H5P.FindTheWords.Counter
+   * @class H5P.SopaDeLetras.Counter
    * @param {H5P.jQuery} $container
    */
 
-  FindTheWords.Counter = function ($container) {
-    /** @alias H5P.FindTheWords.Counter# */
+  SopaDeLetras.Counter = function ($container) {
+    /** @alias H5P.SopaDeLetras.Counter# */
     var self = this;
     var current = 0;
     /**
@@ -32,4 +32,4 @@
     };
   };
 
-})(H5P.FindTheWords);
+})(H5P.SopaDeLetras);

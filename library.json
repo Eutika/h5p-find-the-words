@@ -13,24 +13,24 @@
   "license": "MIT",
   "preloadedCss": [
     {
-      "path": "styles/h5p-find-the-words.css"
+      "path": "styles/h5p-sopa-de-letras.css"
     }
   ],
   "preloadedJs": [
     {
-      "path": "scripts/h5p-find-the-words.js"
+      "path": "scripts/h5p-sopa-de-letras.js"
     },
     {
-      "path": "scripts/h5p-find-the-words-word-grid.js"
+      "path": "scripts/h5p-sopa-de-letras-word-grid.js"
     },
     {
-      "path": "scripts/h5p-find-the-words-vocabulary.js"
+      "path": "scripts/h5p-sopa-de-letras-vocabulary.js"
     },
     {
-      "path": "scripts/h5p-find-the-words-timer.js"
+      "path": "scripts/h5p-sopa-de-letras-timer.js"
     },
     {
-      "path": "scripts/h5p-find-the-words-counter.js"
+      "path": "scripts/h5p-sopa-de-letras-counter.js"
     }
   ],
   "preloadedDependencies": [

@@ -1,20 +1,20 @@
-H5P.FindTheWords = (function ($, UI) {
+H5P.SopaDeLetras = (function ($, UI) {
   const ELEMENT_MIN_SIZE = 32; // PX
   const ELEMENT_MAX_SIZE = 64; // PX
   const MARGIN = 8; //PX
   const VOCABULARY_INLINE_WIDTH = 200;// PX
 
   /**
-   * FindTheWords.
-   * @class H5P.FindTheWords
+   * SopaDeLetras.
+   * @class H5P.SopaDeLetras
    * @extends H5P.EventDispatcher
    * @param {Object} options
    * @param {number} id
    * @param {Object} extras
    */
-  function FindTheWords(options, id, extras) {
+  function SopaDeLetras(options, id, extras) {
 
-    /** @alias H5P.FindTheWords# */
+    /** @alias H5P.SopaDeLetras# */
     this.id = id;
     this.extras = extras;
     this.numFound = 0;
@@ -56,8 +56,8 @@ H5P.FindTheWords = (function ($, UI) {
       fillPool: this.options.behaviour.fillPool
     };
 
-    this.grid = new FindTheWords.WordGrid(this.gridParams);
-    this.vocabulary = new FindTheWords.Vocabulary(
+    this.grid = new SopaDeLetras.WordGrid(this.gridParams);
+    this.vocabulary = new SopaDeLetras.Vocabulary(
       this.options.vocabulary,
       this.options.behaviour.showVocabulary,
       this.options.l10n.wordListHeader
@@ -115,8 +115,8 @@ H5P.FindTheWords = (function ($, UI) {
     });
   }
 
-  FindTheWords.prototype = Object.create(H5P.EventDispatcher.prototype);
-  FindTheWords.prototype.constructor = FindTheWords;
+  SopaDeLetras.prototype = Object.create(H5P.EventDispatcher.prototype);
+  SopaDeLetras.prototype.constructor = SopaDeLetras;
 
   // private and all prototype function goes there
 
@@ -134,7 +134,7 @@ H5P.FindTheWords = (function ($, UI) {
   /**
    * registerDOMElements.
    */
-  FindTheWords.prototype.registerDOMElements = function () {
+  SopaDeLetras.prototype.registerDOMElements = function () {
     const that = this;
 
     this.$playArea = $('<div />', {
@@ -155,7 +155,7 @@ H5P.FindTheWords = (function ($, UI) {
         this.options.l10n.timeSpent + '</span >:' +
         '<span role="definition"  class="h5p-time-spent" >0:00</span>'
     });
-    this.timer = new FindTheWords.Timer(this.$timer.find('.h5p-time-spent'));
+    this.timer = new SopaDeLetras.Timer(this.$timer.find('.h5p-time-spent'));
 
     // counter part
     const counterText = that.options.l10n.found
@@ -167,7 +167,7 @@ H5P.FindTheWords = (function ($, UI) {
       tabindex: 0,
       html: '<div role="term"><span role="definition">' + counterText + '</span></div>'
     });
-    this.counter = new FindTheWords.Counter(this.$counter.find('.h5p-counter'));
+    this.counter = new SopaDeLetras.Counter(this.$counter.find('.h5p-counter'));
 
     // feedback plus progressBar
     this.$feedback = $('<div/>', {
@@ -208,7 +208,7 @@ H5P.FindTheWords = (function ($, UI) {
    * @param {function} callback Callback function.
    * @return {H5P.JoubelUI.Button} Joubel ui button object.
    */
-  FindTheWords.prototype.createButton = function (name, icon, param, callback) {
+  SopaDeLetras.prototype.createButton = function (name, icon, param, callback) {
     const cfunction = callback.bind(this);
     return UI.createButton({
       title: name,
@@ -220,7 +220,7 @@ H5P.FindTheWords = (function ($, UI) {
   /**
    * calculateElementSize - calculate the grid element size according to the container width.
    */
-  FindTheWords.prototype.calculateElementSize = function () {
+  SopaDeLetras.prototype.calculateElementSize = function () {
     const containerWidth = this.$container.width();
     const gridCol = this.grid.wordGrid[0].length;
     const gridMaxWidth = gridCol * ELEMENT_MAX_SIZE + 2 * MARGIN;
@@ -240,7 +240,7 @@ H5P.FindTheWords = (function ($, UI) {
   /**
    * setVocabularyMode - set vocabulary mode (either inline or block).
    */
-  FindTheWords.prototype.setVocabularyMode = function () {
+  SopaDeLetras.prototype.setVocabularyMode = function () {
     const gridCol = this.grid.wordGrid[0].length;
     this.isVocModeBlock = (this.$container.width() - (gridCol * this.elementSize + 2 * MARGIN) > VOCABULARY_INLINE_WIDTH) ? false : true;
   };
@@ -248,7 +248,7 @@ H5P.FindTheWords = (function ($, UI) {
   /**
    * gameSubmitted - callback function for check button.
    */
-  FindTheWords.prototype.gameSubmitted = function () {
+  SopaDeLetras.prototype.gameSubmitted = function () {
     const totalScore = this.vocabulary.words.length;
     const scoreText = this.options.l10n.score
       .replace('@score', this.numFound)
@@ -284,7 +284,7 @@ H5P.FindTheWords = (function ($, UI) {
   /**
    * showSolutions - call back function for show solution button.
    */
-  FindTheWords.prototype.showSolutions = function () {
+  SopaDeLetras.prototype.showSolutions = function () {
     this.grid.disableGrid();
     this.grid.mark(this.vocabulary.getNotFound());
     this.vocabulary.solveWords();
@@ -296,7 +296,7 @@ H5P.FindTheWords = (function ($, UI) {
   /**
    * resetTask - resetting the game.
    */
-  FindTheWords.prototype.resetTask = function () {
+  SopaDeLetras.prototype.resetTask = function () {
     this.numFound = 0;
     this.timer.reset();
     this.counter.reset();
@@ -311,7 +311,7 @@ H5P.FindTheWords = (function ($, UI) {
     this.$retryButton.detach();
     this.$feedbackContainer.removeClass('feedback-show');
 
-    this.grid = new FindTheWords.WordGrid(this.gridParams);
+    this.grid = new SopaDeLetras.WordGrid(this.gridParams);
     this.grid.appendTo(this.$puzzleContainer, this.elementSize);
     this.grid.drawGrid(MARGIN);
     this.grid.enableGrid();
@@ -327,7 +327,7 @@ H5P.FindTheWords = (function ($, UI) {
    * Check whether user is able to play the game.
    * @return {boolean}
    */
-  FindTheWords.prototype.getAnswerGiven = function () {
+  SopaDeLetras.prototype.getAnswerGiven = function () {
     return this.isAttempted;
   };
 
@@ -335,7 +335,7 @@ H5P.FindTheWords = (function ($, UI) {
    *  getScore - Return the score obtained.
    * @return {number}
    */
-  FindTheWords.prototype.getScore = function () {
+  SopaDeLetras.prototype.getScore = function () {
     return this.numFound;
   };
 
@@ -343,7 +343,7 @@ H5P.FindTheWords = (function ($, UI) {
    * Turn the maximum possible score that can be obtained.
    * @return {number}
    */
-  FindTheWords.prototype.getMaxScore = function () {
+  SopaDeLetras.prototype.getMaxScore = function () {
     return this.vocabulary.words.length;
   };
 
@@ -352,7 +352,7 @@ H5P.FindTheWords = (function ($, UI) {
    * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-6}
    * @return {Object} xApi data statement
    */
-  FindTheWords.prototype.getXAPIData = function () {
+  SopaDeLetras.prototype.getXAPIData = function () {
     const xAPIEvent = this.createXAPIEventTemplate('answered');
     this.addQuestionToXAPI(xAPIEvent);
     this.addResponseToXAPI(xAPIEvent);
@@ -365,7 +365,7 @@ H5P.FindTheWords = (function ($, UI) {
    * addQuestionToXAPI - Add the question to the definition part of an xAPIEvent.
    * @param {H5P.XAPIEvent} xAPIEvent
    */
-  FindTheWords.prototype.addQuestionToXAPI = function (xAPIEvent) {
+  SopaDeLetras.prototype.addQuestionToXAPI = function (xAPIEvent) {
     const definition = xAPIEvent.getVerifiedStatementValue(
       ['object', 'definition']
     );
@@ -383,7 +383,7 @@ H5P.FindTheWords = (function ($, UI) {
    * Add the response part to an xAPI event.
    * @param {H5P.XAPIEvent} xAPIEvent
    */
-  FindTheWords.prototype.addResponseToXAPI = function (xAPIEvent) {
+  SopaDeLetras.prototype.addResponseToXAPI = function (xAPIEvent) {
     const maxScore = this.getMaxScore();
     const score = this.getScore();
     const success = (score === maxScore);
@@ -396,7 +396,7 @@ H5P.FindTheWords = (function ($, UI) {
   /**
    * registerGridEvents.
    */
-  FindTheWords.prototype.registerGridEvents = function () {
+  SopaDeLetras.prototype.registerGridEvents = function () {
     const that = this;
 
     this.grid.on('drawStart', function () {
@@ -424,8 +424,8 @@ H5P.FindTheWords = (function ($, UI) {
    * attach - main attach function.
    * @param {H5P.jQuery} $container Description.
    */
-  FindTheWords.prototype.attach = function ($container) {
-    this.$container = $container.addClass('h5p-find-the-words');
+  SopaDeLetras.prototype.attach = function ($container) {
+    this.$container = $container.addClass('h5p-sopa-de-letras');
     this.triggerXAPI('attempted');
 
     if (this.grid) {
@@ -463,6 +463,6 @@ H5P.FindTheWords = (function ($, UI) {
     this.trigger('resize');
   };
 
-  return FindTheWords;
+  return SopaDeLetras;
 
 }) (H5P.jQuery, H5P.JoubelUI);

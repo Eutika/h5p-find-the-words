@@ -1,13 +1,13 @@
-(function (FindTheWords, Timer) {
+(function (SopaDeLetras, Timer) {
 
   /**
-   * FindTheWords.Timer - Adapter between Find the words and H5P.Timer.
-   * @class H5P.FindTheWords.Timer
+   * SopaDeLetras.Timer - Adapter between Find the words and H5P.Timer.
+   * @class H5P.SopaDeLetras.Timer
    * @extends H5P.Timer
    * @param {H5P.jQuery} $element
    */
-  FindTheWords.Timer = function ($element) {
-    /** @alias H5P.FindTheWords.Timer# */
+  SopaDeLetras.Timer = function ($element) {
+    /** @alias H5P.SopaDeLetras.Timer# */
     const that = this;
     // Initialize event inheritance
     Timer.call(that, 100);
@@ -41,7 +41,7 @@
   };
 
   // Inheritance
-  FindTheWords.Timer.prototype = Object.create(Timer.prototype);
-  FindTheWords.Timer.prototype.constructor = FindTheWords.Timer;
+  SopaDeLetras.Timer.prototype = Object.create(Timer.prototype);
+  SopaDeLetras.Timer.prototype.constructor = SopaDeLetras.Timer;
 
-}) (H5P.FindTheWords, H5P.Timer);
+}) (H5P.SopaDeLetras, H5P.Timer);

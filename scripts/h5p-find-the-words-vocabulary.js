@@ -1,13 +1,13 @@
-(function (FindTheWords, EventDispatcher, $) {
+(function (SopaDeLetras, EventDispatcher, $) {
 
   /**
    * Vocabulary - Handles the vocabulary part.
-   * @class H5P.FindTheWords.Vocabulary
+   * @class H5P.SopaDeLetras.Vocabulary
    * @param {Object} params
    * @param {boolean} showVocabulary
    */
-  FindTheWords.Vocabulary = function (params, showVocabulary, header) {
-    /** @alias H5P.FindTheWords.Vocabulary# */
+  SopaDeLetras.Vocabulary = function (params, showVocabulary, header) {
+    /** @alias H5P.SopaDeLetras.Vocabulary# */
     this.words = params;
     this.header = header;
     this.showVocabulary = showVocabulary;
@@ -16,15 +16,15 @@
     this.wordsSolved = [];
   };
 
-  FindTheWords.Vocabulary.prototype = Object.create(EventDispatcher.prototype);
-  FindTheWords.Vocabulary.prototype.constructor = FindTheWords.Vocabulary;
+  SopaDeLetras.Vocabulary.prototype = Object.create(EventDispatcher.prototype);
+  SopaDeLetras.Vocabulary.prototype.constructor = SopaDeLetras.Vocabulary;
 
   /**
    * appendTo - appending vocabulary to the play area.
    * @param {H5P.jQuery} $container
    * @param {string} isModeBlock Either in inline/block mode.
    */
-  FindTheWords.Vocabulary.prototype.appendTo = function ($container, isModeBlock) {
+  SopaDeLetras.Vocabulary.prototype.appendTo = function ($container, isModeBlock) {
     let output = '<div class="vocHeading"><em class="fa fa-book fa-fw" ></em>' +
       this.header + '</div><ul role="list" tabindex="0">';
     this.words.forEach(function (element) {
@@ -44,7 +44,7 @@
    * setMode - set the vocabularies.
    * @param {string} mode
    */
-  FindTheWords.Vocabulary.prototype.setMode = function (isModeBlock) {
+  SopaDeLetras.Vocabulary.prototype.setMode = function (isModeBlock) {
     this.$container
       .toggleClass('vocabulary-block-container', isModeBlock)
       .toggleClass('vocabulary-inline-container', !isModeBlock);
@@ -54,7 +54,7 @@
    * checkWord - if the marked word belongs to the vocabulary as not found.
    * @param {string} word
    */
-  FindTheWords.Vocabulary.prototype.checkWord = function (word) {
+  SopaDeLetras.Vocabulary.prototype.checkWord = function (word) {
     const reverse = word.split('').reverse().join('');
     const originalWord = (this.words.indexOf(word) !== -1) ? word : ( this.words.indexOf(reverse) !== -1) ? reverse : null;
 
@@ -74,7 +74,7 @@
   /**
    * reset - reset the vocabulary upon game resetting.
    */
-  FindTheWords.Vocabulary.prototype.reset = function () {
+  SopaDeLetras.Vocabulary.prototype.reset = function () {
     this.wordsFound = [];
     this.wordsNotFound = this.words;
     if (this.showVocabulary) {
@@ -87,7 +87,7 @@
   /**
    * solveWords - changes on vocabulary upon showing the solution.
    */
-  FindTheWords.Vocabulary.prototype.solveWords = function () {
+  SopaDeLetras.Vocabulary.prototype.solveWords = function () {
     const that = this;
     that.wordsSolved = that.wordsNotFound;
     if (that.showVocabulary) {
@@ -102,7 +102,7 @@
    * getNotFound - return the list of words that are not found yet.
    * @return {Object[]}
    */
-  FindTheWords.Vocabulary.prototype.getNotFound = function () {
+  SopaDeLetras.Vocabulary.prototype.getNotFound = function () {
     const that = this;
     this.wordsNotFound = this.words.filter(function (word) {
       return (that.wordsFound.indexOf(word) === -1);
@@ -114,7 +114,7 @@
    * getFound - returns the words found so far.
    * @return {Object[]}
    */
-  FindTheWords.Vocabulary.prototype.getFound = function () {
+  SopaDeLetras.Vocabulary.prototype.getFound = function () {
     const that = this;
     return this.words.filter(function (word) {
       return (that.wordsFound.indexOf(word) !== -1);
@@ -125,13 +125,13 @@
    * getSolved - get the words solved by the game by show solution feature.
    * @return {Object[]}
    */
-  FindTheWords.Vocabulary.prototype.getSolved = function () {
+  SopaDeLetras.Vocabulary.prototype.getSolved = function () {
     const that = this;
     return this.words.filter(function (word) {
       return (that.wordsSolved.indexOf(word) !== -1);
     });
   };
 
-  return FindTheWords.Vocabulary;
+  return SopaDeLetras.Vocabulary;
 
-}) (H5P.FindTheWords, H5P.EventDispatcher, H5P.jQuery);
+}) (H5P.SopaDeLetras, H5P.EventDispatcher, H5P.jQuery);

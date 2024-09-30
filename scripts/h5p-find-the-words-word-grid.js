@@ -1,13 +1,13 @@
-(function (FindTheWords, EventDispatcher, $) {
+(function (SopaDeLetras, EventDispatcher, $) {
 
   /**
    * WordGrid - Handles the word grid part of the game.
-   * @class H5P.FindTheWords.WordGrid
+   * @class H5P.SopaDeLetras.WordGrid
    * @extends H5P.EventDispatcher
    * @param {Object} params Description.
    */
-  FindTheWords.WordGrid = function (params) {
-    /** @alias H5P.FindTheWords.WordGrid# */
+  SopaDeLetras.WordGrid = function (params) {
+    /** @alias H5P.SopaDeLetras.WordGrid# */
     // extending the default parameter set for the grid
     this.options = params;
 
@@ -16,8 +16,8 @@
     this.createWordGrid();
   };
 
-  FindTheWords.WordGrid.prototype = Object.create(EventDispatcher.prototype);
-  FindTheWords.WordGrid.prototype.constructor = FindTheWords.WordGrid;
+  SopaDeLetras.WordGrid.prototype = Object.create(EventDispatcher.prototype);
+  SopaDeLetras.WordGrid.prototype.constructor = SopaDeLetras.WordGrid;
 
   // get i th element position based on the current position for different orientations
   const orientations = {
@@ -471,7 +471,7 @@
     event.preventDefault();
   };
 
-  FindTheWords.WordGrid.prototype.createWordGrid = function () {
+  SopaDeLetras.WordGrid.prototype.createWordGrid = function () {
     let wordGrid = null ;
     let attempts = 0;
 
@@ -506,7 +506,7 @@
    * markWord - mark the word on the output canvas (permanent).
    * @param {Object} wordParams
    */
-  FindTheWords.WordGrid.prototype.markWord = function (wordParams) {
+  SopaDeLetras.WordGrid.prototype.markWord = function (wordParams) {
     const dirKey = wordParams['directionKey'];
     const clickStart = wordParams['start'];
     const clickEnd = wordParams['end'];
@@ -578,7 +578,7 @@
    * mark - mark the words if they are not found.
    * @param {Object[]} wordList
    */
-  FindTheWords.WordGrid.prototype.mark = function (wordList) {
+  SopaDeLetras.WordGrid.prototype.mark = function (wordList) {
     const words = wordList;
     const that = this;
     const options = {
@@ -608,7 +608,7 @@
    * markSolution.
    * @param {Object[]} solutions
    */
-  FindTheWords.WordGrid.prototype.markSolution = function (solutions) {
+  SopaDeLetras.WordGrid.prototype.markSolution = function (solutions) {
     const that = this;
 
     solutions.forEach(function (solution) {
@@ -633,14 +633,14 @@
   /**
    * disableGrid.
    */
-  FindTheWords.WordGrid.prototype.disableGrid = function () {
+  SopaDeLetras.WordGrid.prototype.disableGrid = function () {
     this.options.gridActive = false;
   };
 
   /**
    * enableGrid.
    */
-  FindTheWords.WordGrid.prototype.enableGrid = function () {
+  SopaDeLetras.WordGrid.prototype.enableGrid = function () {
     this.options.gridActive = true;
   };
 
@@ -649,7 +649,7 @@
    * @param {H5P.jQuery} $container
    * @param {number} elementSize
    */
-  FindTheWords.WordGrid.prototype.appendTo = function ($container, elementSize) {
+  SopaDeLetras.WordGrid.prototype.appendTo = function ($container, elementSize) {
     this.$container = $container;
     this.canvasWidth = elementSize * this.wordGrid[0].length;
     this.canvasHeight = elementSize * this.wordGrid.length;
@@ -662,7 +662,7 @@
    * drawGrid - draw the letter on the canvas element provided.
    * @param {number} margin Description.
    */
-  FindTheWords.WordGrid.prototype.drawGrid = function (margin) {
+  SopaDeLetras.WordGrid.prototype.drawGrid = function (margin) {
     const that = this;
 
     const marginResp = (Math.floor(that.elementSize / 8) < margin) ? (Math.floor(that.elementSize / 8)) : margin;
@@ -783,6 +783,6 @@
     });
   };
 
-  return FindTheWords.WordGrid;
+  return SopaDeLetras.WordGrid;
 
-}) (H5P.FindTheWords, H5P.EventDispatcher, H5P.jQuery);
+}) (H5P.SopaDeLetras, H5P.EventDispatcher, H5P.jQuery);

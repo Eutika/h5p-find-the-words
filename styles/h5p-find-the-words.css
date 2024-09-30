@@ -1,11 +1,11 @@
-.h5p-find-the-words {
+.h5p-sopa-de-letras {
   max-width: 68.25em;
   margin:0 auto;
   width: 100%;
   font-family: Helvetica, Arial, sans-serif;
 }
 
-.h5p-find-the-words .h5p-play-area {
+.h5p-sopa-de-letras .h5p-play-area {
   margin: 0 auto;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
@@ -19,140 +19,140 @@
   border-bottom: 1px solid #eeeeee;
 }
 
-.h5p-find-the-words .game-container {
+.h5p-sopa-de-letras .game-container {
   position: relative;
   display: table;
 }
 
-.h5p-find-the-words .canvas-element {
+.h5p-sopa-de-letras .canvas-element {
   position: absolute;
   top: 0;
   left: 0;
 }
 
-.h5p-find-the-words .puzzle-container {
+.h5p-sopa-de-letras .puzzle-container {
   position: relative;
 }
 
-.h5p-find-the-words .puzzle-inline {
+.h5p-sopa-de-letras .puzzle-inline {
   display: table-cell;
 }
 
-.h5p-find-the-words .puzzle-block {
+.h5p-sopa-de-letras .puzzle-block {
   display: block;
 }
 
-.h5p-find-the-words .vocabulary-container {
+.h5p-sopa-de-letras .vocabulary-container {
   background-color: #eeeeee;
   text-align: left;
 }
 
-.h5p-find-the-words .vocabulary-container .vocHeading {
+.h5p-sopa-de-letras .vocabulary-container .vocHeading {
   color: black;
   font-weight: bold;
   padding: 10px 20px 10px 20px;
   border-bottom: 1px solid #e6e6e6;
 }
 
-.h5p-find-the-words .vocabulary-container ul {
+.h5p-sopa-de-letras .vocabulary-container ul {
   padding-left:8px;
 }
 
-.h5p-find-the-words .vocabulary-container li {
+.h5p-sopa-de-letras .vocabulary-container li {
   text-align: left;
   margin: 4px;
   list-style: none;
 }
 
-.h5p-find-the-words .vocabulary-container li em {
+.h5p-sopa-de-letras .vocabulary-container li em {
   visibility: hidden;
 }
 
-.h5p-find-the-words .vocabulary-block-container {
+.h5p-sopa-de-letras .vocabulary-block-container {
   height: auto !important;
   width: 100% !important;
   display: table-row;
 }
 
-.h5p-find-the-words .vocabulary-block-container li {
+.h5p-sopa-de-letras .vocabulary-block-container li {
   display:inline-block;
 }
 
-.h5p-find-the-words .vocabulary-inline-container {
+.h5p-sopa-de-letras .vocabulary-inline-container {
   width: auto !important;
   overflow-y: auto;
   display: table-cell;
 }
 
-.h5p-find-the-words .vocabulary-container .word-found {
+.h5p-sopa-de-letras .vocabulary-container .word-found {
   color: green;
 }
 
-.h5p-find-the-words .vocabulary-inline-container .word-found em {
+.h5p-sopa-de-letras .vocabulary-inline-container .word-found em {
   color: green;
   visibility: visible;
 }
 
-.h5p-find-the-words .vocabulary-container .word-solved {
+.h5p-sopa-de-letras .vocabulary-container .word-solved {
   color: #0067de;
 }
 
-.h5p-find-the-words .vocabulary-inline-container .word-solved em {
+.h5p-sopa-de-letras .vocabulary-inline-container .word-solved em {
   color: #0067de;
   visibility: visible;
 }
 
-.h5p-find-the-words .vocabulary-container .word {
+.h5p-sopa-de-letras .vocabulary-container .word {
   font-weight: bold;
   font-size: 1em;
   display: inline-block;
 }
 
-.h5p-find-the-words .vocabulary-container li i {
+.h5p-sopa-de-letras .vocabulary-container li i {
   visibility: hidden;
 }
 
-.h5p-find-the-words .footer-container {
+.h5p-sopa-de-letras .footer-container {
   border-top: 1px solid #eeeeee;
   position: relative;
   padding: 8px;
 }
 
-.h5p-find-the-words .feedback-container {
+.h5p-sopa-de-letras .feedback-container {
   clear: both;
   display: none;
   padding-top: 1em;
 }
 
-.h5p-find-the-words .feedback-show {
+.h5p-sopa-de-letras .feedback-show {
   display: block;
 }
 
-.h5p-find-the-words .feedback-show .feedback-element {
+.h5p-sopa-de-letras .feedback-show .feedback-element {
   margin: 0.5em;
 }
 
-.h5p-find-the-words .button-container {
+.h5p-sopa-de-letras .button-container {
   clear: both;
   padding-top: 1em;
 }
 
-.h5p-find-the-words button .fa {
+.h5p-sopa-de-letras button .fa {
   /* Add some marging between FA icon and button text */
   margin-right: 0.5em;
 }
 
-.h5p-find-the-words .time-status {
+.h5p-sopa-de-letras .time-status {
   display: inline-block;
   float: left;
 }
 
-.h5p-find-the-words .counter-status {
+.h5p-sopa-de-letras .counter-status {
   display: inline-block;
   float: right;
 }
 
-.h5p-find-the-words .feedback-text {
+.h5p-sopa-de-letras .feedback-text {
   display: block;
   margin-bottom: 0.8em;
   font-weight: bold;
@@ -160,17 +160,17 @@
   position: relative;
 }
 
-.h5p-find-the-words .h5p-found,
-.h5p-find-the-words .h5p-counter,
-.h5p-find-the-words .h5p-time-spent {
+.h5p-sopa-de-letras .h5p-found,
+.h5p-sopa-de-letras .h5p-counter,
+.h5p-sopa-de-letras .h5p-time-spent {
   font-weight: bold;
   margin-left: 4px;
 }
 
-.h5p-find-the-words .time-status span {
+.h5p-sopa-de-letras .time-status span {
   margin-right: 4px;
 }
 
-.h5p-find-the-words  em::before {
+.h5p-sopa-de-letras  em::before {
   margin-right: 8px;
 }
