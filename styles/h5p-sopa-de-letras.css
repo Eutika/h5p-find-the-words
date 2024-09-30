@@ -41,17 +41,6 @@
   background-color: #f0f0f0;
 }
 
-.h5p-sopa-de-letras .grid-cell {
-  width: 30px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #ccc;
-  font-size: 18px;
-  font-weight: bold;
-}
-
 .h5p-sopa-de-letras .puzzle-container .grid-cell {
   width: 30px;
   height: 30px;
