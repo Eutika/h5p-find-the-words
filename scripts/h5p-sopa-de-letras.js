@@ -68,7 +68,7 @@ H5P.SopaDeLetras = (function ($, UI) {
       wordIcons,
       this.options.vocabulary,
       this.options.behaviour.showVocabulary,
-      this.options.l10n.wordListHeader,
+      this.options.l10n.wordListHeader
     );
     this.registerDOMElements();
 
