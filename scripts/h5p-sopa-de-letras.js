@@ -30,7 +30,9 @@ H5P.SopaDeLetras = (function ($, UI) {
     const vocabulary = options.wordList.map(item => (item && item.word) || '').filter(Boolean);
     const wordIcons = options.wordList.reduce((acc, item) => {
       if (item && item.word && item.icon) {
-        acc[item.word] = item.icon;
+        acc[item.word] = {
+          path: 'content/' + H5PEditor.contentId + '/images/' + item.icon.path
+        };
       }
       return acc;
     }, {});

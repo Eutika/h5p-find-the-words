@@ -31,7 +31,7 @@
     this.words.forEach((element) => {
       const identifierName = element.replace(/ /g, '');
       const iconHtml = this.wordIcons[element] ? 
-        `<img src="${this.wordIcons[element].path}" alt="Icon for ${element}" class="word-icon">` : '';
+        `<img src="${H5P.getPath(this.wordIcons[element].path, H5PEditor.contentId)}" alt="Icon for ${element}" class="word-icon">` : '';
       output += `<li role="presentation"><div role="listitem" aria-label="${identifierName} not found" id="${identifierName}" class="word">
         ${iconHtml}<em class="fa fa-check"></em>${element}</div></li>`;
     });
