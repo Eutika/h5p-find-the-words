@@ -19,6 +19,106 @@
   SopaDeLetras.WordGrid.prototype = Object.create(EventDispatcher.prototype);
   SopaDeLetras.WordGrid.prototype.constructor = SopaDeLetras.WordGrid;
 
+  SopaDeLetras.WordGrid.prototype.registerGridEvents = function () {
+    const that = this;
+    let isSelecting = false;
+    let startCell = null;
+    let selectedCells = [];
+  
+    this.$container.on('mousedown touchstart', '.grid-cell', function (e) {
+      e.preventDefault();
+      isSelecting = true;
+      startCell = $(this);
+      selectedCells = [startCell];
+      that.highlightCells(selectedCells);
+      that.trigger('drawStart');
+    });
+  
+    this.$container.on('mousemove touchmove', '.grid-cell', function (e) {
+      if (!isSelecting) return;
+      
+      const currentCell = $(this);
+      if (that.isValidSelection(startCell, currentCell)) {
+        selectedCells = that.getCellsBetween(startCell, currentCell);
+        that.highlightCells(selectedCells);
+      }
+    });
+  
+    $(document).on('mouseup touchend', function () {
+      if (isSelecting) {
+        isSelecting = false;
+        const word = that.getWordFromCells(selectedCells);
+        const wordObject = {
+          start: [parseInt(startCell.attr('data-row')), parseInt(startCell.attr('data-col'))],
+          end: [parseInt(selectedCells[selectedCells.length - 1].attr('data-row')), 
+                parseInt(selectedCells[selectedCells.length - 1].attr('data-col'))],
+          dir: that.getDirection(startCell, selectedCells[selectedCells.length - 1])
+        };
+        that.trigger('drawEnd', {'markedWord': word, 'wordObject': wordObject});
+      }
+    });
+  };
+  
+  SopaDeLetras.WordGrid.prototype.isValidSelection = function (start, end) {
+    const startRow = parseInt(start.attr('data-row'));
+    const startCol = parseInt(start.attr('data-col'));
+    const endRow = parseInt(end.attr('data-row'));
+    const endCol = parseInt(end.attr('data-col'));
+    
+    return startRow === endRow || startCol === endCol || 
+           Math.abs(endRow - startRow) === Math.abs(endCol - startCol);
+  };
+  
+  SopaDeLetras.WordGrid.prototype.getCellsBetween = function (start, end) {
+    const cells = [];
+    const startRow = parseInt(start.attr('data-row'));
+    const startCol = parseInt(start.attr('data-col'));
+    const endRow = parseInt(end.attr('data-row'));
+    const endCol = parseInt(end.attr('data-col'));
+    
+    const rowStep = endRow > startRow ? 1 : endRow < startRow ? -1 : 0;
+    const colStep = endCol > startCol ? 1 : endCol < startCol ? -1 : 0;
+    
+    let currentRow = startRow;
+    let currentCol = startCol;
+    
+    while (currentRow !== endRow || currentCol !== endCol) {
+      cells.push(this.$container.find(`.grid-cell[data-row="${currentRow}"][data-col="${currentCol}"]`));
+      currentRow += rowStep;
+      currentCol += colStep;
+    }
+    cells.push(end);
+    return cells;
+  };
+  
+  SopaDeLetras.WordGrid.prototype.highlightCells = function (cells) {
+    this.$container.find('.grid-cell').removeClass('highlighted');
+    cells.forEach(cell => cell.addClass('highlighted'));
+  };
+  
+  SopaDeLetras.WordGrid.prototype.getWordFromCells = function (cells) {
+    return cells.map(cell => cell.text()).join('');
+  };
+  
+  SopaDeLetras.WordGrid.prototype.getDirection = function (start, end) {
+    const startRow = parseInt(start.attr('data-row'));
+    const startCol = parseInt(start.attr('data-col'));
+    const endRow = parseInt(end.attr('data-row'));
+    const endCol = parseInt(end.attr('data-col'));
+  
+    const rowDiff = endRow - startRow;
+    const colDiff = endCol - startCol;
+  
+    if (rowDiff === 0 && colDiff > 0) return 'horizontal';
+    if (rowDiff === 0 && colDiff < 0) return 'horizontalBack';
+    if (rowDiff > 0 && colDiff === 0) return 'vertical';
+    if (rowDiff < 0 && colDiff === 0) return 'verticalUp';
+    if (rowDiff > 0 && colDiff > 0) return 'diagonal';
+    if (rowDiff > 0 && colDiff < 0) return 'diagonalBack';
+    if (rowDiff < 0 && colDiff > 0) return 'diagonalUp';
+    if (rowDiff < 0 && colDiff < 0) return 'diagonalUpBack';
+  };
+
   // get i th element position based on the current position for different orientations
   const orientations = {
     horizontal: function (x, y, i) {
@@ -355,89 +455,6 @@
     }
   };
 
-  // All event handlers are registered here
-
-  /**
-   * mouseDownEventHandler.
-   * @param {Object} e Event Object.
-   * @param {HTMLelement} canvas Html5 canvas element.
-   * @param {number} elementSize Element size.
-   * @return {Object[]}
-   */
-  const mouseDownEventHandler = function (e, canvas, elementSize) {
-    const x = e.pageX - $(canvas).offset().left;
-    const y = e.pageY - $(canvas).offset().top;
-    return calculateCordinates(x, y, elementSize);
-  };
-
-
-  /*
-   * event handler for handling mousemove events
-   * @private
-   */
-
-  /**
-   * mouseMoveEventHandler.
-   * @param {Object} e Event Object.
-   * @param {HTMLelement} canvas Html5 Canvas Element.
-   * @param {Object[]} srcPos Position from which the movement started.
-   * @param {number} eSize  Current element size.
-   */
-  const mouseMoveEventHandler = function (e, canvas, srcPos, eSize) {
-    const offsetTop = ($(canvas).offset().top > eSize * 0.75) ? Math.floor(eSize * 0.75) : $(canvas).offset().top;
-    const desX = e.pageX - $(canvas).offset().left;
-    const desY = e.pageY - Math.abs(offsetTop);
-    const context = canvas.getContext('2d');
-
-    // Draw the current marking
-    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-    context.fillStyle = 'rgba(107,177,125,0.3)';
-    context.beginPath();
-    context.lineCap = 'round';
-    context.moveTo(srcPos[0] - (eSize / 8), srcPos[1] + (offsetTop / 8));
-    context.strokeStyle = 'rgba(107,177,125,0.4)';
-    context.lineWidth = Math.floor(eSize / 2);
-    context.lineTo(desX - (eSize / 8), desY + (offsetTop / 8));
-    context.stroke();
-    context.closePath();
-  };
-
-  /*
-   * event handler for handling mouseup events
-   * @private
-   */
-
-  /**
-   * mouseUpEventHandler.
-   * @param {Object} e Event Object.
-   * @param {HTMLelement} canvas Html5 Canvas Element.
-   * @param {number} elementSize Current element size.
-   * @param {Object[]} clickStart Starting Event location.
-   * @return {Object} return staring,ending and direction of the current marking.
-   */
-  const mouseUpEventHandler = function (e, canvas, elementSize, clickStart) {
-    let wordObject = {};
-    const offsetTop = ($(canvas).offset().top > elementSize * 0.75) ? Math.floor(elementSize * 0.75) * (-1) : $(canvas).offset().top;
-    const x = e.pageX - $(canvas).offset().left;
-    const y = e.pageY - Math.abs(offsetTop);
-    const clickEnd = calculateCordinates(x, y, elementSize);
-    const context = canvas.getContext('2d');
-
-    if ((Math.abs(clickEnd[0] - x) < 20) && (Math.abs(clickEnd[1] - y) < 15)) {
-      // Drag ended within permissible range
-      wordObject = {
-        'start': clickStart,
-        'end': clickEnd,
-        'dir': getValidDirection(clickStart[2], clickStart[3], clickEnd[2], clickEnd[3])
-      };
-    }
-
-    // Clear if there any markings started
-    context.closePath();
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    return wordObject;
-  };
-
   /**
    * touchHandler - Mapping touchevents to corresponding mouse events.
    * @param {Object} event Description.
@@ -507,71 +524,17 @@
    * @param {Object} wordParams
    */
   SopaDeLetras.WordGrid.prototype.markWord = function (wordParams) {
-    const dirKey = wordParams['directionKey'];
-    const clickStart = wordParams['start'];
-    const clickEnd = wordParams['end'];
-    const context = this.$outputCanvas[0].getContext('2d');
-    const offsetTop = (this.$container.offset().top > this.elementSize * 0.75) ? Math.floor(this.elementSize * 0.75) * (-1) : this.$container.offset().top;
-    const topRadius = Math.floor(this.elementSize / 8);
-    const bottomRadius = Math.abs(Math.floor(offsetTop / 8));
-    const lineWidth = Math.floor(this.elementSize / 4);
-
-    let startingAngle;
-
-    // set the drawing property values
-    context.lineWidth = 2;
-    context.strokeStyle = 'rgba(107,177,125,0.9)';
-    context.fillStyle = 'rgba(107,177,125,0.3)';
-
-    if (!this.options.gridActive) {
-      context.strokeStyle = 'rgba(51, 102, 255,0.9)';
-      context.fillStyle = 'rgba(51, 102, 255,0.1)';
-      context.setLineDash([8, 4]);
-    }
-
-    // find the arc starting angle depending on the direction
-    switch (dirKey) {
-      case 'horizontal': {
-        startingAngle = (Math.PI / 2);
-        break;
-      }
-      case 'horizontalBack': {
-        startingAngle = -(Math.PI / 2);
-        break;
-      }
-      case 'diagonal': {
-        startingAngle = 3 * (Math.PI / 4);
-        break;
-      }
-      case 'diagonalBack': {
-        startingAngle = 5 * (Math.PI / 4);
-        break;
-      }
-      case 'diagonalUp': {
-        startingAngle = (Math.PI / 4);
-        break;
-      }
-      case 'diagonalUpBack': {
-        startingAngle = -(Math.PI / 4);
-        break;
-      }
-      case 'vertical': {
-        startingAngle = (Math.PI);
-        break;
-      }
-      case 'verticalUp': {
-        startingAngle = 0;
-        break;
-      }
-    }
-
-    // start drawing
-    context.beginPath();
-    context.arc(clickStart[0] - topRadius, clickStart[1] + bottomRadius, lineWidth, startingAngle, startingAngle + (Math.PI));
-    context.arc(clickEnd[0] - topRadius, clickEnd[1] + bottomRadius, lineWidth, startingAngle + (Math.PI), startingAngle + (2 * Math.PI));
-    context.closePath();
-    context.stroke();
-    context.fill();
+    const startRow = wordParams.start[2];
+    const startCol = wordParams.start[3];
+    const endRow = wordParams.end[2];
+    const endCol = wordParams.end[3];
+  
+    const cells = this.getCellsBetween(
+      this.$container.find(`.grid-cell[data-row="${startRow}"][data-col="${startCol}"]`),
+      this.$container.find(`.grid-cell[data-row="${endRow}"][data-col="${endCol}"]`)
+    );
+  
+    cells.forEach(cell => cell.addClass('word-found'));
   };
 
   /**
@@ -609,27 +572,19 @@
    * @param {Object[]} solutions
    */
   SopaDeLetras.WordGrid.prototype.markSolution = function (solutions) {
-    const that = this;
-
-    solutions.forEach(function (solution) {
-      const next = orientations[solution.orientation];
-      const word = solution.word;
-      const startX = solution.x;
-      const startY = solution.y;
-      const endPos = next(startX, startY, word.length - 1);
-      const clickStartX = startX * that.elementSize + (that.elementSize / 2);
-      const clickStartY = startY * that.elementSize + (that.elementSize / 2);
-      const clickEndX = endPos.x * that.elementSize + (that.elementSize / 2);
-      const clickEndY = endPos.y * that.elementSize + (that.elementSize / 2);
+    solutions.forEach(solution => {
+      const startCell = this.$container.find(`.grid-cell[data-row="${solution.y}"][data-col="${solution.x}"]`);
+      const endCell = this.$container.find(`.grid-cell[data-row="${solution.y + solution.word.length - 1}"][data-col="${solution.x + solution.word.length - 1}"]`);
+      
       const wordParams = {
-        'start': [clickStartX, clickStartY, startX, startY],
-        'end': [clickEndX, clickEndY, endPos.x, endPos.y],
-        'directionKey': solution.orientation
+        start: [0, 0, solution.y, solution.x],
+        end: [0, 0, solution.y + solution.word.length - 1, solution.x + solution.word.length - 1],
+        directionKey: this.getDirectionKey(startCell, endCell)
       };
-      that.markWord(wordParams);
+  
+      this.markWord(wordParams);
     });
   };
-
   /**
    * disableGrid.
    */
@@ -651,136 +606,94 @@
    */
   SopaDeLetras.WordGrid.prototype.appendTo = function ($container, elementSize) {
     this.$container = $container;
-    this.canvasWidth = elementSize * this.wordGrid[0].length;
-    this.canvasHeight = elementSize * this.wordGrid.length;
     this.elementSize = elementSize;
-    $container.css('height', this.canvasHeight);
-    $container.css('width', this.canvasWidth);
-  };
-
-  /**
-   * drawGrid - draw the letter on the canvas element provided.
-   * @param {number} margin Description.
-   */
-  SopaDeLetras.WordGrid.prototype.drawGrid = function (margin) {
-    const that = this;
-
-    const marginResp = (Math.floor(that.elementSize / 8) < margin) ? (Math.floor(that.elementSize / 8)) : margin;
-    const offsetTop = (that.$container.offset().top > that.elementSize * 0.75) ? Math.floor(that.elementSize * 0.75) : that.$container.offset().top;
-
-    this.$gridCanvas = $('<canvas id="grid-canvas" class="canvas-element" height="' + that.canvasHeight + 'px" width="' + that.canvasWidth + 'px" />').appendTo(that.$container);
-    this.$outputCanvas = $('<canvas class="canvas-element" height="' + that.canvasHeight + 'px" width="' + that.canvasWidth + 'px"/>').appendTo(that.$container);
-    this.$drawingCanvas = $('<canvas id="drawing-canvas" class="canvas-element" height="' + that.canvasHeight + 'px" width="' + that.canvasWidth + 'px"/>').appendTo(that.$container);
-
-    const ctx1 = this.$gridCanvas[0].getContext('2d');
-    const offset = that.$container.offset();
-
-    ctx1.clearRect(offset.left, offset.top, that.canvasWidth, that.canvasHeight);
-    ctx1.font = (that.elementSize / 3 ) + 'px sans-serif';
-
-    that.wordGrid.forEach(function (row, index1) {
-      row.forEach(function (element, index2) {
-        ctx1.fillText(element.toUpperCase(), index2 * that.elementSize + 2 * marginResp, index1 * that.elementSize + (offsetTop) );
+    
+    // Create the grid container
+    const $grid = $('<div>', {
+      class: 'puzzle-container',
+      role: 'grid',
+      tabindex: '0'
+    }).appendTo(this.$container);
+  
+    // Create grid cells
+    this.wordGrid.forEach((row, rowIndex) => {
+      row.forEach((letter, colIndex) => {
+        $('<div>', {
+          class: 'grid-cell',
+          text: letter.toUpperCase(),
+          'data-row': rowIndex,
+          'data-col': colIndex
+        }).appendTo($grid);
       });
     });
+  
+    // Set grid dimensions
+    const gridWidth = this.wordGrid[0].length * elementSize;
+    const gridHeight = this.wordGrid.length * elementSize;
+    $grid.css({
+      width: gridWidth + 'px',
+      height: gridHeight + 'px',
+      display: 'grid',
+      gridTemplateColumns: `repeat(${this.wordGrid[0].length}, 1fr)`
+    });
+  
+    this.registerGridEvents();
+  };
 
-    let clickStart = [];
-    let isDragged = false;
-    let clickMode = false;
+  SopaDeLetras.WordGrid.prototype.resetHighlighting = function () {
+    this.$container.find('.grid-cell').removeClass('highlighted word-found');
+  };
 
-    this.$container[0].addEventListener('keydown', function () {
-      //TODO: need to implement for a11y
-    }, false);
-
-    this.$drawingCanvas[0].addEventListener('touchstart', function (event) {
-      touchHandler(event);
-    }, false);
-
-    this.$drawingCanvas[0].addEventListener('touchmove', function (event) {
-      touchHandler(event);
-    }, false);
-
-    this.$drawingCanvas[0].addEventListener('touchend', function (event) {
-      touchHandler(event);
-    }, false);
-
-    this.$drawingCanvas.on('mousedown', function (event) {
-      if (that.options.gridActive) {
-        if (!clickMode) {
-          that.enableDrawing = true;
-          clickStart = mouseDownEventHandler(event, this, that.elementSize);
-          that.trigger('drawStart');
-        }
+  SopaDeLetras.WordGrid.prototype.registerGridEvents = function () {
+  
+    // Add touch event handling
+    this.$container.on('touchstart', '.grid-cell', function (e) {
+      e.preventDefault();
+      $(this).trigger('mousedown');
+    });
+  
+    this.$container.on('touchmove', '.grid-cell', function (e) {
+      e.preventDefault();
+      const touch = e.originalEvent.touches[0];
+      const element = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (element && element.classList.contains('grid-cell')) {
+        $(element).trigger('mousemove');
       }
     });
-
-    this.$drawingCanvas.on('mouseup', function (event) {
-      if (that.enableDrawing) {
-        if (isDragged || clickMode) {
-          if (clickMode) {
-            clickMode = false;
-          }
-          let markedWord = '';
-          const wordObject = mouseUpEventHandler(event, this, that.elementSize, clickStart);
-          const dict = {
-            'horizontal' : [1, 0],
-            'horizontalBack' : [-1, 0],
-            'diagonal' : [1, 1],
-            'diagonalBack' : [-1, 1],
-            'diagonalUp' : [1, -1],
-            'diagonalUpBack' : [-1, -1],
-            'vertical' : [0, 1],
-            'verticalUp' : [0, -1]
-          };
-
-          if (!$.isEmptyObject(wordObject) && wordObject['dir'] !== false) {
-            const dir = wordObject['dir'];
-            let y1 = wordObject['start'][3];
-            let x1 = wordObject['start'][2];
-            let x2 = wordObject['end'][2];
-            const y2 = wordObject['end'][3];
-
-            do {
-              markedWord += that.wordGrid[y1][x1];
-              x1 = x1 + dir[0];
-              y1 = y1 + dir[1];
-            } while (!((y1 === y2) && (x1 === x2)));
-
-            markedWord += that.wordGrid[y2][x2];
-            for (const key in dict) {
-              if (dict[key][0] === dir[0] && dict[key][1] === dir[1]) {
-                wordObject['directionKey'] = key;
-                break;
-              }
-            }
-          }
-          that.enableDrawing = false;
-          isDragged = false;
-          that.trigger('drawEnd', {'markedWord': markedWord, 'wordObject': wordObject});
-        }
-        else if (!clickMode) {
-          clickMode = true;
-          const offsetTop = (that.$container.offset().top > that.elementSize * 0.75) ? Math.floor(that.elementSize * 0.75) : that.$container.offset().top;
-          const context = that.$drawingCanvas[0].getContext('2d');
-          //drawing the dot on initial click
-          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-          context.lineWidth = Math.floor(that.elementSize / 2);
-          context.strokeStyle = 'rgba(107,177,125,0.9)';
-          context.fillStyle = 'rgba(107,177,125,0.3)';
-          context.beginPath();
-          context.arc(clickStart[0] - (that.elementSize / 8), clickStart[1] + Math.floor(offsetTop / 8), that.elementSize / 4, 0, 2 * Math.PI);
-          context.fill();
-          context.closePath();
-        }
-      }
+  
+    $(document).on('touchend', function (e) {
+      e.preventDefault();
+      $(document).trigger('mouseup');
     });
 
-    this.$drawingCanvas.on('mousemove', function (event) {
-      if (that.enableDrawing ) {
-        isDragged = true;
-        mouseMoveEventHandler(event, this, clickStart, that.elementSize);
+    $(document).on('mouseup touchend', function () {
+      if (isSelecting) {
+        isSelecting = false;
+        const word = that.getWordFromCells(selectedCells);
+        const wordObject = {
+          start: [parseInt(startCell.attr('data-row')), parseInt(startCell.attr('data-col'))],
+          end: [parseInt(selectedCells[selectedCells.length - 1].attr('data-row')), 
+                parseInt(selectedCells[selectedCells.length - 1].attr('data-col'))],
+          dir: that.getDirectionKey(startCell, selectedCells[selectedCells.length - 1])
+        };
+        that.trigger('drawEnd', {'markedWord': word, 'wordObject': wordObject});
       }
     });
+  };
+
+  SopaDeLetras.WordGrid.prototype.getDirectionKey = function (start, end) {
+    const direction = this.getDirection(start, end);
+    const directionMap = {
+      'horizontal': 'horizontal',
+      'horizontalBack': 'horizontalBack',
+      'vertical': 'vertical',
+      'verticalUp': 'verticalUp',
+      'diagonal': 'diagonal',
+      'diagonalBack': 'diagonalBack',
+      'diagonalUp': 'diagonalUp',
+      'diagonalUpBack': 'diagonalUpBack'
+    };
+    return directionMap[direction];
   };
 
   return SopaDeLetras.WordGrid;
