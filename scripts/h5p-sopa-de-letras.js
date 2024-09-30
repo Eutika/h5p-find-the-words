@@ -31,7 +31,7 @@ H5P.SopaDeLetras = (function ($, UI) {
     const wordIcons = options.wordList.reduce((acc, item) => {
       if (item && item.word && item.icon) {
         acc[item.word] = {
-          path: item.icon.path
+          path: H5P.getPath(item.icon.path, this.id),
         };
       }
       return acc;
