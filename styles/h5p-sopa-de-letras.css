@@ -47,6 +47,13 @@
   text-align: left;
 }
 
+.h5p-sopa-de-letras .vocabulary-container .word-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
 .h5p-sopa-de-letras .vocabulary-container .vocHeading {
   color: black;
   font-weight: bold;

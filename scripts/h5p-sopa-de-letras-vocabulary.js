@@ -6,11 +6,12 @@
    * @param {Object} params
    * @param {boolean} showVocabulary
    */
-  SopaDeLetras.Vocabulary = function (params, showVocabulary, header) {
+  SopaDeLetras.Vocabulary = function (params, showVocabulary, header, wordIcons) {
     /** @alias H5P.SopaDeLetras.Vocabulary# */
     this.words = params;
     this.header = header;
     this.showVocabulary = showVocabulary;
+    this.wordIcons = wordIcons;
     this.wordsFound = [];
     this.wordsNotFound = [];
     this.wordsSolved = [];
@@ -25,12 +26,14 @@
    * @param {string} isModeBlock Either in inline/block mode.
    */
   SopaDeLetras.Vocabulary.prototype.appendTo = function ($container, isModeBlock) {
-    let output = '<div class="vocHeading"><em class="fa fa-book fa-fw" ></em>' +
+    let output = '<div class="vocHeading"><em class="fa fa-book fa-fw"></em>' +
       this.header + '</div><ul role="list" tabindex="0">';
-    this.words.forEach(function (element) {
+    this.words.forEach((element) => {
       const identifierName = element.replace(/ /g, '');
-      output += '<li role="presentation" ><div role="listitem"  aria-label="' + identifierName + ' not found" id="' + identifierName + '"class="word">\
-      <em class="fa fa-check" ></em>' + element + '</div></li>';
+      const iconHtml = this.wordIcons[element] ? 
+        `<img src="${this.wordIcons[element].path}" alt="Icon for ${element}" class="word-icon">` : '';
+      output += `<li role="presentation"><div role="listitem" aria-label="${identifierName} not found" id="${identifierName}" class="word">
+        ${iconHtml}<em class="fa fa-check"></em>${element}</div></li>`;
     });
     output += '</ul>';
 

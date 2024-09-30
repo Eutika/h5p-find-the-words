@@ -9,14 +9,36 @@
   },
   {
     "name": "wordList",
-    "type": "text",
+    "type": "list",
     "label": "Word list",
-    "description": "Comma Separated list of words. Special Characters, White Spaces and Numbers Not allowed",
-    "default": "one,two,three",
-    "regexp": {
-      "pattern": "^(?!(?:.*[\"!#$%&./:;<=>?@\\[\\]^_`\\{|}~'()\\-*+\\d]|^[,])).*$"
-    },
-    "importance": "high"
+    "description": "List of words to find in the grid",
+    "importance": "high",
+    "entity": "word",
+    "min": 1,
+    "field": {
+      "name": "wordItem",
+      "type": "group",
+      "label": "Word item",
+      "importance": "high",
+      "fields": [
+        {
+          "name": "word",
+          "type": "text",
+          "label": "Word",
+          "description": "Word to find in the grid. Special characters, white spaces, and numbers are not allowed.",
+          "regexp": {
+            "pattern": "^[a-zA-Z]+$"
+          }
+        },
+        {
+          "name": "icon",
+          "type": "image",
+          "label": "Icon",
+          "description": "Optional icon for the word",
+          "optional": true
+        }
+      ]
+    }
   },
   {
     "name": "behaviour",

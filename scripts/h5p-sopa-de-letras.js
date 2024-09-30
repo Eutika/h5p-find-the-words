@@ -22,14 +22,11 @@ H5P.SopaDeLetras = (function ($, UI) {
     this.isGameStarted = false;
 
     // Only take the unique words
-    const vocabulary = options.wordList
-      .split(',')
-      .map(function (word) {
-        return word.trim().replace(/ +/g, '');
-      })
-      .filter(function (word, pos, self) {
-        return self.indexOf(word) === pos && word.length > 0;
-      });
+    const vocabulary = this.options.wordList.map(item => item.word);
+    const wordIcons = this.options.wordList.reduce((acc, item) => {
+      acc[item.word] = item.icon;
+      return acc;
+    }, {});
 
     this.options = $.extend(true, {
       vocabulary: vocabulary,
@@ -58,6 +55,8 @@ H5P.SopaDeLetras = (function ($, UI) {
 
     this.grid = new SopaDeLetras.WordGrid(this.gridParams);
     this.vocabulary = new SopaDeLetras.Vocabulary(
+      vocabulary,
+      wordIcons,
       this.options.vocabulary,
       this.options.behaviour.showVocabulary,
       this.options.l10n.wordListHeader
