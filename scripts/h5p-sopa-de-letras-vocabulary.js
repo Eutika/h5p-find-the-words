@@ -31,8 +31,10 @@
       this.header + '</div><ul role="list" tabindex="0">';
     this.words.forEach((element) => {
       const identifierName = element.replace(/ /g, '');
+      const iconPath = this.wordIcons[element] ? H5P.getPath(this.wordIcons[element].path, this.id) : null;
+      console.log('Icon path for', element, ':', iconPath);
       const iconHtml = this.wordIcons[element] ? 
-        `<img src="${H5P.getPath(this.wordIcons[element].path, this.id)}" alt="Icon for ${element}" class="word-icon">` : '';
+        `<img src="{iconPath}" alt="Icon for ${element}" class="word-icon">` : '';
       output += `<li role="presentation"><div role="listitem" aria-label="${identifierName} not found" id="${identifierName}" class="word">
         ${iconHtml}<em class="fa fa-check"></em>${element}</div></li>`;
     });
