@@ -21,6 +21,12 @@ H5P.SopaDeLetras = (function ($, UI) {
     this.isAttempted = false;
     this.isGameStarted = false;
 
+     // Add a check for options and options.wordList
+    if (!options || !options.wordList) {
+      console.error('Invalid options or missing wordList');
+      options = options || {};
+      options.wordList = [];
+    }
     // Only take the unique words
     const vocabulary = this.options.wordList.map(item => item.word);
     const wordIcons = this.options.wordList.reduce((acc, item) => {
